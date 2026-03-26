@@ -27,7 +27,7 @@ def save_artifacts(
         "input_shape": list(X_train.shape),
         "num_features": X_train.shape[1],
         "train_size": len(X_train),
-        "test_size": len(X_test),
+        "test_size": len(X_test) if X_test is not None else None,
     }
 
     if extra_metadata:

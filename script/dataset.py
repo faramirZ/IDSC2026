@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from script.features import extract_features
 
 class ECGDataset:
     def __init__(self, metadata: pd.DataFrame, loader):
@@ -39,7 +40,8 @@ class ECGDataset:
             signals, label = self.get_sample(pid)
 
             # VERY SIMPLE baseline: flatten signal
-            features = signals.flatten()  # (12 * 1200 = 14400)
+            # features = signals.flatten()  # (12 * 1200 = 14400)
+            features = extract_features(signals)
 
             X.append(features)
             y.append(label)
