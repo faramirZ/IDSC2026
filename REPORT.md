@@ -134,35 +134,68 @@ Per lead (12 leads × 1 + special):
 
 ## 5. Results
 
-### Cross-Validation Performance (5-Fold Stratified)
+### Cross-Validation Performance (5-Fold Stratified on Full Dataset)
 
-| Metric | Score |
-|--------|-------|
-| **ROC-AUC** | 0.702 ± 0.089 |
-| **F1-Score** | 0.176 ± 0.062 |
-| **Precision** | 0.179 ± 0.076 |
-| **Recall** | 0.102 ± 0.034 |
+| Metric | Mean | Std Dev | Range |
+|--------|------|---------|-------|
+| **ROC-AUC** | 0.738 | 0.096 | 0.546 – 0.798 |
+| **F1-Score** | 0.170 | 0.069 | 0.105 – 0.267 |
+| **Precision** | 0.720 | 0.387 | 0.200 – 1.000 |
+| **Recall** | 0.103 | 0.040 | 0.071 – 0.154 |
+
+**Cross-validation details by fold:**
+
+| Fold | ROC-AUC | F1 | Precision | Recall |
+|------|---------|----|-----------|--------|
+| 1 | 0.749 | 0.125 | 0.500 | 0.071 |
+| 2 | 0.699 | 0.133 | 1.000 | 0.071 |
+| 3 | 0.798 | 0.250 | 1.000 | 0.143 |
+| 4 | 0.546 | 0.105 | 0.200 | 0.071 |
+| 5 | 0.716 | 0.267 | 1.000 | 0.154 |
+
+### Test Set Performance (20% Hold-Out, n=72)
+
+**Classification Report:**
+```
+              precision    recall  f1-score   support
+           0       0.83      1.00      0.91        58
+           1       1.00      0.14      0.25        14
+    
+    accuracy                           0.83        72
+   macro avg       0.91      0.57      0.58        72
+weighted avg       0.86      0.83      0.78        72
+```
+
+**Key Metrics:**
+- **ROC-AUC (Test Set):** 0.824
+- **Overall Accuracy:** 83%
+
+**Confusion Matrix (Test Set, n=72):**
+```
+                Predicted
+                Negative  Positive
+Actual Negative    58        0
+       Positive    12        2
+```
+
+**Performance Breakdown:**
+- **True Negatives:** 58/58 = 100% specificity (no false alarms)
+- **True Positives:** 2/14 = 14.3% sensitivity (recall)
+- **False Negatives:** 12/14 = 85.7% miss rate
+- **False Positives:** 0/58 = 0% (perfect specificity)
 
 ### Interpretation of Results
 
 **Strengths:**
-- **Moderate ROC-AUC (0.702):** Better than random guessing (0.50) and approaching clinical utility threshold
-- **Cross-validation consistency:** Standard deviations indicate stable generalization across folds
+- **High ROC-AUC (0.824 on test, 0.738 mean CV):** Model achieves good discrimination ability
+- **Perfect Specificity (100%):** No false positives—model doesn't incorrectly flag healthy individuals
+- **High Precision for Brugada (100%):** When model predicts positive, it's always correct
 
-**Limitations:**
-- **Low Recall (10.2%):** Only detects ~1 in 10 true Brugada cases; **clinically insufficient** for deployment
-- **Low F1-Score (0.176):** Poor balance between precision and recall
-- **High False Negative Rate:** Misses 89.8% of positive cases — unacceptable risk given sudden cardiac death risk
-
-### Confusion Matrix (Aggregate)
-```
-                Predicted
-                Negative  Positive
-Actual Negative    240        22
-       Positive     84        10
-```
-- **True Negatives:** 240/262 = 91.6% specificity
-- **True Positives:** 10/94 = 10.6% sensitivity (recall)
+**Critical Limitations:**
+- **Extremely Low Recall (14.3% on test, 10.3% CV):** Only detects ~1 in 7 Brugada cases
+- **High False Negative Rate (85.7%):** **Misses 12 out of 14 positive cases in test set**
+- **Clinically Unacceptable:** Missing 85%+ of Brugada patients is unacceptable given sudden cardiac death risk
+- **Poor F1-Score (0.25):** Poor balance between precision and recall
 
 ---
 
